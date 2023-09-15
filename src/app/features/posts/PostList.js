@@ -1,8 +1,16 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { fetchPosts } from './postSlice'
+import { useDispatch } from 'react-redux'
 
 export const PostsList = () => {
-  const posts = useSelector((state) => state.posts)
+  const posts = useSelector((state) => state.posts.posts)
+  const dispatch = useDispatch()
+
+  React.useEffect(() => {
+    dispatch(fetchPosts())
+  }, [dispatch])
+
   const renderedPosts = posts.map((post) => (
     <article className="post-excerpt" key={post.id}>
       <h3>{post.title}</h3>
