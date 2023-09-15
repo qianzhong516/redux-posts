@@ -8,10 +8,11 @@ import {
 import { useDispatch } from 'react-redux'
 
 import { Navbar } from './app/Navbar'
-import { PostsList } from './app/features/posts/PostList'
-import { AddPostForm } from './app/features/posts/AddPostForm'
-import { SinglePostPage } from './app/features/posts/SinglePostPage'
-import { fetchPosts } from './app/features/posts/postSlice'
+import { PostsList } from './features/posts/PostList'
+import { AddPostForm } from './features/posts/AddPostForm'
+import { SinglePostPage } from './features/posts/SinglePostPage'
+import { fetchPosts } from './features/posts/postSlice'
+import { EditPostForm } from './features/posts/EditPostForm'
 
 function App() {
   const dispatch = useDispatch()
@@ -36,6 +37,7 @@ function App() {
             )}
           />
           <Route exact path="/posts/:postId" component={SinglePostPage} />
+          <Route exact path="/editPost/:postId" component={EditPostForm} />
           <Redirect to="/" />
         </Switch>
       </div>
