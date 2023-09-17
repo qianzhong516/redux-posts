@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { addPost } from './postSlice'
 
 export const AddPostForm = () => {
@@ -7,22 +7,35 @@ export const AddPostForm = () => {
 
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
+  const [userId, setUserId] = useState('')
+  const users = useSelector((state) => state.users)
 
   const onTitleChanged = (e) => setTitle(e.target.value)
   const onContentChanged = (e) => setContent(e.target.value)
+  const onAuthorChanged = (e) => setUserId(e.target.value)
 
   const handleSubmit = () => {
-    if (title && content) {
+    if (title && content && userId) {
       dispatch(
         addPost({
           title,
           content,
+          userId,
         })
       )
     }
     setTitle('')
     setContent('')
+    setUserId('')
   }
+
+  const usersOptions = users.map((user) => (
+    <option key={user.id} value={user.id}>
+      {user.name}
+    </option>
+  ))
+
+  const canSave = title && content && userId
 
   return (
     <section>
@@ -36,6 +49,11 @@ export const AddPostForm = () => {
           value={title}
           onChange={onTitleChanged}
         />
+        <label htmlFor="postAuthor">Author:</label>
+        <select id="postAuthor" value={userId} onChange={onAuthorChanged}>
+          <option value=""></option>
+          {usersOptions}
+        </select>
         <label htmlFor="postContent">Content:</label>
         <textarea
           id="postContent"
@@ -43,7 +61,7 @@ export const AddPostForm = () => {
           value={content}
           onChange={onContentChanged}
         />
-        <button type="button" onClick={handleSubmit}>
+        <button type="button" onClick={handleSubmit} disabled={!canSave}>
           Save Post
         </button>
       </form>

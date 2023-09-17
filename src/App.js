@@ -13,12 +13,14 @@ import { AddPostForm } from './features/posts/AddPostForm'
 import { SinglePostPage } from './features/posts/SinglePostPage'
 import { fetchPosts } from './features/posts/postSlice'
 import { EditPostForm } from './features/posts/EditPostForm'
+import { fetchUsers } from './features/users/userSlice'
 
 function App() {
   const dispatch = useDispatch()
 
   React.useEffect(() => {
     dispatch(fetchPosts())
+    dispatch(fetchUsers())
   }, [dispatch])
 
   return (
