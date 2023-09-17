@@ -21,6 +21,7 @@ export const postSlice = createSlice({
             title,
             content,
             user: userId,
+            date: new Date().toISOString(),
           },
         }
       },
