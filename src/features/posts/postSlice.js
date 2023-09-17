@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, nanoid } from '@reduxjs/toolkit'
 import { client } from '../../api/client'
 
 const initialState = {
@@ -10,8 +10,19 @@ export const postSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
-    addPost: (state, action) => {
-      state.posts.push(action.payload)
+    addPost: {
+      reducer: (state, action) => {
+        state.posts.push(action.payload)
+      },
+      prepare: ({ title, content }) => {
+        return {
+          payload: {
+            id: nanoid(),
+            title,
+            content,
+          },
+        }
+      },
     },
     postUpdated: (state, action) => {
       const { id, content, title } = action.payload
