@@ -22,6 +22,13 @@ export const postSlice = createSlice({
             content,
             user: userId,
             date: new Date().toISOString(),
+            reactions: {
+              thumbsUp: 0,
+              hooray: 0,
+              heart: 0,
+              rocket: 0,
+              eyes: 0,
+            },
           },
         }
       },
@@ -31,6 +38,13 @@ export const postSlice = createSlice({
       const post = state.posts.find((post) => post.id === id)
       post.content = content
       post.title = title
+    },
+    reactionAdded: (state, action) => {
+      const { id, name } = action.payload
+      const post = state.posts.find((post) => post.id === id)
+      if (post) {
+        post.reactions[name] += 1
+      }
     },
   },
   extraReducers: (builder) => {
@@ -50,6 +64,6 @@ export const fetchPosts = createAsyncThunk('posts/getPosts', async () => {
   return data
 })
 
-export const { addPost, postUpdated } = postSlice.actions
+export const { addPost, postUpdated, reactionAdded } = postSlice.actions
 
 export default postSlice.reducer
