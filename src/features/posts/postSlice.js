@@ -3,7 +3,8 @@ import { client } from '../../api/client'
 
 const initialState = {
   posts: [],
-  status: 'loading',
+  status: 'idle',
+  error: null,
 }
 
 export const postSlice = createSlice({
@@ -54,7 +55,7 @@ export const postSlice = createSlice({
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.posts.push(...action.payload)
-        state.status = 'idle'
+        state.status = 'loaded'
       })
   },
 })
@@ -63,6 +64,8 @@ export const selectPost = (postId) => (state) =>
   state.posts.posts.find((post) => post.id === postId)
 
 export const selectPosts = (state) => state.posts.posts
+
+export const selectPostStatus = (state) => state.posts.status
 
 export const fetchPosts = createAsyncThunk('posts/getPosts', async () => {
   const { data } = await client.get('/fakeApi/posts')
