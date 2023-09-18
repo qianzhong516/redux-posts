@@ -71,6 +71,8 @@ export const selectPosts = (state) => state.posts.posts
 
 export const selectPostStatus = (state) => state.posts.status
 
+export const selectPostError = (state) => state.posts.error
+
 export const fetchPosts = createAsyncThunk('posts/getPosts', async () => {
   const { data } = await client.get('/fakeApi/posts')
   return data

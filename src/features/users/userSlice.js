@@ -17,8 +17,9 @@ const userSlice = createSlice({
         state.status = 'loading'
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
-        state.users.push(...action.payload)
         state.status = 'loaded'
+        // to avoid duplicate entries being added to the `users` state
+        state.users = action.payload
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.error = action.error.message
