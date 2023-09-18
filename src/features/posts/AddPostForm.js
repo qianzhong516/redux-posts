@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addPost } from './postSlice'
+import { selectUsers } from '../users/userSlice'
 
 export const AddPostForm = () => {
   const dispatch = useDispatch()
@@ -8,7 +9,7 @@ export const AddPostForm = () => {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [userId, setUserId] = useState('')
-  const users = useSelector((state) => state.users)
+  const users = useSelector(selectUsers)
 
   const onTitleChanged = (e) => setTitle(e.target.value)
   const onContentChanged = (e) => setContent(e.target.value)

@@ -20,4 +20,8 @@ export const fetchUsers = createAsyncThunk('users/loadUsers', async () => {
   return data
 })
 
+export const selectUsers = (state) => state.users
+export const selectUser = (userId) => (state) =>
+  state.users.find((user) => user.id === userId)
+
 export default userSlice.reducer

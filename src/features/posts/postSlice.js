@@ -59,6 +59,11 @@ export const postSlice = createSlice({
   },
 })
 
+export const selectPost = (postId) => (state) =>
+  state.posts.posts.find((post) => post.id === postId)
+
+export const selectPosts = (state) => state.posts.posts
+
 export const fetchPosts = createAsyncThunk('posts/getPosts', async () => {
   const { data } = await client.get('/fakeApi/posts')
   return data
