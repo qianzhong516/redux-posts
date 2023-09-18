@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, nanoid } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { client } from '../../api/client'
 
 const initialState = {
@@ -11,29 +11,6 @@ export const postSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
-    addPost: {
-      reducer: (state, action) => {
-        state.posts.push(action.payload)
-      },
-      prepare: ({ title, content, userId }) => {
-        return {
-          payload: {
-            id: nanoid(),
-            title,
-            content,
-            user: userId,
-            date: new Date().toISOString(),
-            reactions: {
-              thumbsUp: 0,
-              hooray: 0,
-              heart: 0,
-              rocket: 0,
-              eyes: 0,
-            },
-          },
-        }
-      },
-    },
     postUpdated: (state, action) => {
       const { id, content, title } = action.payload
       const post = state.posts.find((post) => post.id === id)
@@ -61,6 +38,9 @@ export const postSlice = createSlice({
         state.error = action.error.message
         state.status = 'failed'
       })
+      .addCase(addPost.fulfilled, (state, action) => {
+        state.posts.push(action.payload)
+      })
   },
 })
 
@@ -78,6 +58,25 @@ export const fetchPosts = createAsyncThunk('posts/getPosts', async () => {
   return data
 })
 
-export const { addPost, postUpdated, reactionAdded } = postSlice.actions
+export const addPost = createAsyncThunk(
+  'posts/addPost',
+  async ({ title, content, userId }) => {
+    try {
+      const post = {
+        title,
+        content,
+        user: userId,
+        date: new Date().toISOString(),
+      }
+      const { data } = await client.post('/fakeApi/posts', post)
+      return data
+    } catch (err) {
+      // customize the error message if request fails
+      throw new Error('Content cannot be "error"').message
+    }
+  }
+)
+
+export const { postUpdated, reactionAdded } = postSlice.actions
 
 export default postSlice.reducer

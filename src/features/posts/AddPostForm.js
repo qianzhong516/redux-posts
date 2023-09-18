@@ -9,26 +9,29 @@ export const AddPostForm = () => {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [userId, setUserId] = useState('')
+  const [addRequestStatus, setAddRequestStatus] = useState('idle')
 
   const users = useSelector(selectUsers)
+  const canSave = title && content && userId && addRequestStatus === 'idle'
 
   const onTitleChanged = (e) => setTitle(e.target.value)
   const onContentChanged = (e) => setContent(e.target.value)
   const onAuthorChanged = (e) => setUserId(e.target.value)
 
-  const handleSubmit = () => {
-    if (title && content && userId) {
-      dispatch(
-        addPost({
-          title,
-          content,
-          userId,
-        })
-      )
+  const handleSubmit = async () => {
+    if (canSave) {
+      try {
+        setAddRequestStatus('pending')
+        await dispatch(addPost({ title, content, userId })).unwrap()
+        setTitle('')
+        setContent('')
+        setUserId('')
+      } catch (err) {
+        console.error('Failed to save the post: ', err)
+      } finally {
+        setAddRequestStatus('idle')
+      }
     }
-    setTitle('')
-    setContent('')
-    setUserId('')
   }
 
   const usersOptions = users.map((user) => (
@@ -36,8 +39,6 @@ export const AddPostForm = () => {
       {user.name}
     </option>
   ))
-
-  const canSave = title && content && userId
 
   return (
     <section>
