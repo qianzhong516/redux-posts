@@ -57,6 +57,10 @@ export const postSlice = createSlice({
         state.posts.push(...action.payload)
         state.status = 'loaded'
       })
+      .addCase(fetchPosts.rejected, (state, action) => {
+        state.error = action.error.message
+        state.status = 'failed'
+      })
   },
 })
 
