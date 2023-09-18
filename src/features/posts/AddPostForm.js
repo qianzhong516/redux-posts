@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addPost } from './postSlice'
-import { selectUsers } from '../users/userSlice'
+import { selectUsers, selectUserStatus, fetchUsers } from '../users/userSlice'
 
 export const AddPostForm = () => {
   const dispatch = useDispatch()
@@ -9,7 +9,15 @@ export const AddPostForm = () => {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [userId, setUserId] = useState('')
+
   const users = useSelector(selectUsers)
+  const userStatus = useSelector(selectUserStatus)
+
+  React.useEffect(() => {
+    if (userStatus === 'idle') {
+      dispatch(fetchUsers())
+    }
+  }, [userStatus, dispatch])
 
   const onTitleChanged = (e) => setTitle(e.target.value)
   const onContentChanged = (e) => setContent(e.target.value)

@@ -1,15 +1,23 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { PostAuthor } from './PostAuthor'
 import { TimeAgo } from './TimeAgo'
 import { ReactionButtons } from './ReactionButtons'
-import { selectPosts } from './postSlice'
+import { selectPosts, selectPostStatus, fetchPosts } from './postSlice'
 
 export const PostsList = () => {
-  const posts = useSelector(selectPosts)
+  const dispatch = useDispatch()
 
+  const postStatus = useSelector(selectPostStatus)
+  const posts = useSelector(selectPosts)
   const sortedPosts = posts.slice().sort((a, b) => b.date.localeCompare(a.date))
+
+  React.useEffect(() => {
+    if (postStatus === 'idle') {
+      dispatch(fetchPosts())
+    }
+  }, [postStatus, dispatch])
 
   const renderedPosts = sortedPosts.map((post) => (
     <article className="post-excerpt" key={post.id}>
