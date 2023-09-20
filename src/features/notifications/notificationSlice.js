@@ -53,4 +53,4 @@ export const { markRead, syncLatestNotificationStatus } =
 export const selectAllNotifications = (state) => state.notifications
 
 export const selectUnreadNotificationCount = (state) =>
-  state.notifications.filter((notification) => !notification.read).length
+  state.notifications.filter((notification) => notification.isNew).length
