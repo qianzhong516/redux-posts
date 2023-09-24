@@ -2,6 +2,7 @@ import {
   createAsyncThunk,
   createSlice,
   createEntityAdapter,
+  createSelector,
 } from '@reduxjs/toolkit'
 import { client } from '../../api/client'
 
@@ -71,6 +72,12 @@ export const {
 export const selectPostStatus = (state) => state.posts.status
 
 export const selectPostError = (state) => state.posts.error
+
+// create memoized selector that only regenerates results if inputs change
+export const selectPostsByUser = createSelector(
+  [selectPosts, (state, userId) => userId],
+  (posts, userId) => posts.filter((post) => post.user === userId)
+)
 
 export const fetchPosts = createAsyncThunk('posts/getPosts', async () => {
   const { data } = await client.get('/fakeApi/posts')

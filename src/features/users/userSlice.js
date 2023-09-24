@@ -1,11 +1,16 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import {
+  createAsyncThunk,
+  createSlice,
+  createEntityAdapter,
+} from '@reduxjs/toolkit'
 import { client } from '../../api/client'
 
-const initialState = {
-  users: [],
+const userAdapter = createEntityAdapter()
+
+const initialState = userAdapter.getInitialState({
   status: 'idle',
   error: null,
-}
+})
 
 const userSlice = createSlice({
   name: 'users',
@@ -19,7 +24,7 @@ const userSlice = createSlice({
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.status = 'loaded'
         // to avoid duplicate entries being added to the `users` state
-        state.users = action.payload
+        userAdapter.setAll(state, action.payload)
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.error = action.error.message
@@ -32,10 +37,8 @@ export const fetchUsers = createAsyncThunk('users/loadUsers', async () => {
   return data
 })
 
-export const selectUsers = (state) => state.users.users
-
-export const selectUser = (userId) => (state) =>
-  state.users.users.find((user) => user.id === userId)
+export const { selectAll: selectUsers, selectById: selectUser } =
+  userAdapter.getSelectors((state) => state.users)
 
 export const selectUserStatus = (state) => state.users.status
 
