@@ -49,6 +49,12 @@ export const selectPost = (postId) => (state) =>
 
 export const selectPosts = (state) => state.posts.posts
 
+export const selectPostIds = (state) =>
+  state.posts.posts
+    .slice()
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .map((post) => post.id)
+
 export const selectPostStatus = (state) => state.posts.status
 
 export const selectPostError = (state) => state.posts.error
