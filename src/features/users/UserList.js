@@ -1,10 +1,10 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, shallowEqual } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { selectUsers } from './userSlice'
 
 export const UsersList = () => {
-  const users = useSelector(selectUsers)
+  const users = useSelector(selectUsers, shallowEqual)
 
   const renderedUsers = users.map((user) => (
     <li key={user.id}>
