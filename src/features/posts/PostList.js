@@ -14,7 +14,7 @@ import {
 import { Spinner } from '../../components/Spinner'
 
 const PostExcerpt = ({ postId }) => {
-  const post = useSelector(selectPost(postId))
+  const post = useSelector((state) => selectPost(state, postId))
 
   return (
     <article className="post-excerpt">
@@ -34,7 +34,7 @@ export const PostsList = () => {
   const dispatch = useDispatch()
 
   const postStatus = useSelector(selectPostStatus)
-  const sortedPostIds = useSelector(selectPostIds, shallowEqual)
+  const sortedPostIds = useSelector(selectPostIds)
   const error = useSelector(selectPostError)
 
   React.useEffect(() => {

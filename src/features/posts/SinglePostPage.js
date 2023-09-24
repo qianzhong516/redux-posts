@@ -9,7 +9,7 @@ import { selectPost } from './postSlice'
 export const SinglePostPage = ({ match }) => {
   const { postId } = match.params
 
-  const post = useSelector(selectPost(postId))
+  const post = useSelector((state) => selectPost(state, postId))
 
   if (!post) {
     return (

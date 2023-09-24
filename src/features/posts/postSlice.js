@@ -1,11 +1,31 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import {
+  createAsyncThunk,
+  createSlice,
+  createEntityAdapter,
+} from '@reduxjs/toolkit'
 import { client } from '../../api/client'
 
-const initialState = {
-  posts: [],
+/**
+ * Normalizing state structure by `createEntityAdapter`. E.g,
+ * {
+ *   posts: {
+ *     ids: ["1", "2", "3"],
+ *     entities: {
+ *       "1": {id: "1", title, content, ...},
+ *       "2": {id: "2", title, content, ...},
+ *       "3": {id: "3", title, content, ...},
+ *     }
+ *   }
+ * }
+ */
+const postAdapter = createEntityAdapter({
+  sortComparer: (a, b) => b.date.localeCompare(a.date),
+})
+
+const initialState = postAdapter.getInitialState({
   status: 'idle',
   error: null,
-}
+})
 
 export const postSlice = createSlice({
   name: 'posts',
@@ -13,13 +33,13 @@ export const postSlice = createSlice({
   reducers: {
     postUpdated: (state, action) => {
       const { id, content, title } = action.payload
-      const post = state.posts.find((post) => post.id === id)
+      const post = state.entities[id]
       post.content = content
       post.title = title
     },
     reactionAdded: (state, action) => {
       const { id, name } = action.payload
-      const post = state.posts.find((post) => post.id === id)
+      const post = state.entities[id]
       if (post) {
         post.reactions[name] += 1
       }
@@ -31,29 +51,22 @@ export const postSlice = createSlice({
         state.status = 'loading'
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
-        state.posts.push(...action.payload)
+        postAdapter.upsertMany(state, action.payload)
         state.status = 'loaded'
       })
       .addCase(fetchPosts.rejected, (state, action) => {
         state.error = action.error.message
         state.status = 'failed'
       })
-      .addCase(addPost.fulfilled, (state, action) => {
-        state.posts.push(action.payload)
-      })
+      .addCase(addPost.fulfilled, postAdapter.addOne)
   },
 })
 
-export const selectPost = (postId) => (state) =>
-  state.posts.posts.find((post) => post.id === postId)
-
-export const selectPosts = (state) => state.posts.posts
-
-export const selectPostIds = (state) =>
-  state.posts.posts
-    .slice()
-    .sort((a, b) => b.date.localeCompare(a.date))
-    .map((post) => post.id)
+export const {
+  selectAll: selectPosts,
+  selectById: selectPost,
+  selectIds: selectPostIds,
+} = postAdapter.getSelectors((state) => state.posts)
 
 export const selectPostStatus = (state) => state.posts.status
 
